@@ -2,46 +2,52 @@
 
   <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3doa3k4b2J3aG54Z3V4Z3V4Z3V4Z3V4Z3V4Z3V4Z3V4/LrmUaf0O6t9oXq8w0F/giphy.gif" width="150" height="150" alt="Bot Logo"/>
 
-  # 🌿 GreenLeaf Bot (Multi-Core)
+  # 🌿 GreenLeaf Bot (Premium V2.5)
   
-  **Bot Lễ Tân Thế Hệ Mới - Chạy song song Messenger & Discord**
+  **Siêu Bot Messenger Bất Tử - Tích hợp Sòng Bạc & Máy Chém 🐧☝️**
   
   [![Node.js](https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+<<<<<<< HEAD
   [![Platform](https://img.shields.io/badge/Platform-Messenger%20|%20Discord-blue?style=for-the-badge&logo=facebook)](https://facebook.com)
   [![Status](https://img.shields.io/badge/Status-24%2F7%20VPS-red?style=for-the-badge&logo=server)](https://congmc.com)
+=======
+  [![Platform](https://img.shields.io/badge/Platform-Messenger-blue?style=for-the-badge&logo=facebook)](https://facebook.com)
+  [![Status](https://img.shields.io/badge/Status-24%2F7%20VPS-red?style=for-the-badge&logo=server)](https://github.com/)
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
   [![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)](LICENSE)
 
   ---
   
-  > *"Không chỉ là Bot, đây là Lễ Tân cute nhất hệ mặt trời!"* 🐧☝️
+  > *"Không chỉ là Bot, đây là Lễ Tân kiêm luôn Nhà Cái uy tín nhất hệ mặt trời!"* 🐧☝️
 
 </div>
 
 ## 📖 Giới Thiệu
-**GreenLeaf Bot** là một dự án bot mã nguồn mở được tối ưu hóa để chạy trên cả hai nền tảng phổ biến nhất hiện nay: **Facebook Messenger** và **Discord**. 
-Với kiến trúc **Modular**, bot có thể dễ dàng mở rộng, bảo trì và hoạt động bền bỉ 24/7 trên VPS nhờ tích hợp hệ thống **Anti-Crash** và **Auto-Renew Session**.
+**GreenLeaf Bot** là một dự án bot Messenger mã nguồn mở được tối ưu hóa cực hạn để bảo vệ tài khoản (Anti-Block) và quản lý nhóm chat. 
+Với kiến trúc **Modular**, bot sở hữu hệ thống kinh tế (Economy) mạnh mẽ, máy chém Auto-Ban động và khả năng hoạt động bền bỉ 24/7 trên VPS.
 
 ## ✨ Tính Năng Nổi Bật
 
 | Tính Năng | Mô Tả | Trạng Thái |
 | :--- | :--- | :---: |
-| **🦄 Multi-Core** | Chạy 1 source code cho cả Mess & Discord (Switch Mode) | ✅ |
-| **🎬 Douyin/TikTok** | Tự động bóc link video không logo, hỗ trợ link ngắn | ✅ |
-| **🛡️ VPS Immortal** | Tự động login lại khi mất mạng, tự lưu AppState mới | ✅ |
-| **🧠 Smart Adapter** | Tự động chuyển đổi cú pháp gửi ảnh/video theo nền tảng | ✅ |
-| **⏳ Anti-Spam** | Hệ thống Cooldown thông minh chống spam lệnh | ✅ |
-| **📂 Module System** | Tách biệt Commands, Events và Utils dễ quản lý | ✅ |
+| **🛡️ Hệ Thống Bất Tử** | Tách biệt Core và Vỏ, kết hợp Adapter delay random chống block | ✅ |
+| **⚔️ Máy Chém Động** | Auto-ban khi spam, tự động ân xá. Tùy chỉnh độ gắt qua lệnh | ✅ |
+| **💰 Sòng Bạc Macau** | Hệ thống Tài Xỉu theo phiên 20s, ghép kèo nhiều người, All-in khô máu | ✅ |
+| **👑 God Mode (Admin)** | Thao túng tiền tệ (`?eco`), bế quan tỏa cảng (`?noreply`), out box từ xa | ✅ |
+| **🧠 Smart Utils** | Tự động dọn dẹp và fix lỗi Database JSON, chống corrupt data | ✅ |
+| **🚀 Hot Reload** | Lệnh `?restart` nạp lại Core và Commands với tốc độ 0s | ✅ |
 
 ## 🛠️ Cài Đặt & Sử Dụng
 
 ### 1. Yêu cầu hệ thống
-* Node.js (Phiên bản 16 trở lên)
+* Node.js (Phiên bản 18 trở lên)
 * Git
-* Một tài khoản Facebook (cho mode Messenger) hoặc Bot Token (cho mode Discord)
+* Một tài khoản Facebook (Khuyến nghị dùng acc clone/2022 sạch)
 
 ### 2. Cài đặt
 Mở Terminal hoặc Command Prompt và chạy các lệnh sau:
 
+```bash
 # 1. Clone source code về máy
 git clone [https://github.com/username-cua-may/GreenLeafBot.git](https://github.com/username-cua-may/GreenLeafBot.git)
 
@@ -51,18 +57,19 @@ cd GreenLeafBot
 # 3. Cài đặt các thư viện cần thiết
 npm install
 3. Cấu hình (Quan trọng ⚠️)
-Đổi tên file config.json.example thành config.json và điền thông tin của bạn:
+Tạo hoặc chỉnh sửa file config.json và điền thông tin của bạn:
 
 JSON
 {
-  "mode": "messenger", 
-  "prefix": ".",
+  "prefix": "?",
   "adminIDs": ["YOUR_UID_HERE"],
-  "discordToken": "YOUR_DISCORD_TOKEN",
+  "adminOnly": false,
+  "rateLimitCount": 3,
+  "rateLimitTime": 2500,
   "appStatePath": "./appstate_letan.json"
 }
 
-> Lưu ý: Nếu chạy mode Messenger, bạn cần đăng nhập và xuất file appstate_letan.json (J2TEAM Cookies) để vào thư mục gốc.
+Lưu ý: Bạn cần đăng nhập Facebook và xuất file appstate_letan.json (J2TEAM Cookies hoặc C3C) để vào thư mục gốc.
 
 🚀 Vận Hành (Run)
 Chạy thử nghiệm (Local)
@@ -79,26 +86,24 @@ pm2 start index.js --name "GreenLeafBot"
 
 # Xem log
 pm2 log
-
 📂 Cấu Trúc Thư Mục
 
 GreenLeafBot/
+├── cache/              # Bộ nhớ đệm (money.json, banned.json)
 
-├── assets/   # Tài nguyên (Ảnh, Font)
-├── cache/    # Bộ nhớ đệm (Tự động dọn dẹp)
+├── commands/           # Chứa các lệnh (daily, taixiu, eco, ratelimit...)
 
-├── commands/           # Chứa các lệnh (Command modules)
+├── events/             # Chứa các sự kiện tự động
 
-├── events/             # Chứa các sự kiện (Event modules)
+├── utils/              # Các hàm hỗ trợ (index, adapter, log)
 
-├── utils/              # Các hàm hỗ trợ (Log, Adapter, Downloader)
+├── config.json         # File cấu hình biến môi trường
 
-├── config.json         # File cấu hình chính
+├── core.js             # 🧠 BỘ NÃO (Xử lý lệnh, chặn spam)
 
-├── index.js            # File khởi động (Core)
+├── index.js            # 🛡️ VỎ BỌC (Khởi tạo kết nối)
 
 └── README.md           # Bạn đang đọc nó đấy 🐧
-
 
 🤝 Đóng Góp
 Mọi ý kiến đóng góp đều được hoan nghênh! Hãy tạo Pull Request hoặc mở Issue nếu bạn phát hiện lỗi.
@@ -106,7 +111,7 @@ Mọi ý kiến đóng góp đều được hoan nghênh! Hãy tạo Pull Reques
 📜 Credits
 Base: @dongdev/fca-unofficial
 
-Author: AMoon (CongMC Dev Team)
+Author: Chủ Tịch & Gemini
 
 Special Thanks: Cộng đồng J2TEAM & Pterodactyl
 

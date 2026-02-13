@@ -1,13 +1,20 @@
 /**
  * ====================================================================
+<<<<<<< HEAD
  * 🌿 GREENLEAF BOT - CORE SYSTEM (ULTIMATE EDITION)
  * 👑 Coded by: Bot 2026 (Assistant)
  * 🐧 Style: Gen Z & Wibu Friendly
+=======
+ * 🌿 GREENLEAF BOT - VỎ BỌC BẤT TỬ (SESSION HOLDER)
+ * 👑 Coded by: Tao x Mày 🐧
+ * 🛡️ Chức năng: Giữ kết nối Messenger/Discord, không bao giờ ngắt!
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
  * ====================================================================
  */
 
 const fs = require("fs-extra");
 const path = require("path");
+<<<<<<< HEAD
 const config = require("./config.json"); // File cấu hình
 const logger = require("./utils/log");   // File log màu mè
 const UniversalAPI = require("./utils/adapter"); // Bộ chuyển đổi Discord/Mess
@@ -34,6 +41,25 @@ const logDebug = (msg) => {
 process.on('unhandledRejection', (reason, p) => {
     if (config.debugMode) console.error('[ANTI-CRASH] Chi tiết:', reason);
     logger.error(`[ANTI-CRASH] Lỗi không xác định: ${reason.message || reason}`);
+=======
+const config = require("./config.json");
+const logger = require("./utils/log");
+
+// --- ⚙️ KHỞI TẠO BIẾN TOÀN CỤC (GLOBAL) ---
+global.client = {
+    commands: new Map(),
+    events: new Map(),
+    cooldowns: new Map(),
+    rateLimit: new Map(), // Cái này để chặn spam ở mức Core
+    config: config
+};
+
+// --- 🛡️ ANTI-CRASH (CHỐNG ĐỘT TỬ) ---
+// Bắt mọi lỗi lặt vặt để bot không bị văng terminal 🐧
+process.on('unhandledRejection', (reason, p) => {
+    if (config.debugMode) console.error('[ANTI-CRASH] Chi tiết:', reason);
+    logger.error(`[ANTI-CRASH] Lỗi Promise: ${reason}`);
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
 });
 
 process.on('uncaughtException', (err, origin) => {
@@ -41,6 +67,7 @@ process.on('uncaughtException', (err, origin) => {
     logger.error(`[ANTI-CRASH] Lỗi nghiêm trọng: ${err.message}`);
 });
 
+<<<<<<< HEAD
 // ============================================================
 // 📂 HỆ THỐNG LOAD FILE (LOG TABLE EDITION)
 // ============================================================
@@ -269,6 +296,26 @@ async function startBot() {
         logger.info("🔵 Đang khởi động DISCORD Bot...");
         const { Client, GatewayIntentBits, Partials } = require('discord.js');
         
+=======
+// Nạp lệnh và event lần đầu tiên khi bật bot
+try {
+    const core = require("./core.js");
+    core.loadCommands();
+    core.loadEvents();
+} catch (e) {
+    logger.error(`❌ Chưa có file core.js kìa m ơi! Tạo lẹ đi :)?`);
+}
+
+// ============================================================
+// 🚀 KHỞI ĐỘNG (STARTUP) - CHỈ GIỮ KẾT NỐI
+// ============================================================
+async function startBot() {
+    logger.banner("GreenLeaf OS");
+
+    // --- MODE 1: DISCORD ---
+    if (config.mode === "discord") {
+        const { Client, GatewayIntentBits, Partials } = require('discord.js');
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
         const client = new Client({ 
             intents: [
                 GatewayIntentBits.Guilds,
@@ -283,6 +330,7 @@ async function startBot() {
 
         client.on('ready', () => {
             logger.info(`✅ [DISCORD] Đã online: ${client.user.tag}`);
+<<<<<<< HEAD
             client.user.setActivity(`${config.prefix}help | Bot 2026`, { type: 4 });
         });
 
@@ -293,32 +341,61 @@ async function startBot() {
         client.login(config.discordToken).catch(e => {
             logger.error(`❌ [DISCORD] Lỗi Login: ${e.message}`);
         });
+=======
+            client.user.setActivity(`Đang chống spam | Bot 2026`, { type: 4 });
+        });
+
+        client.on('messageCreate', async (msg) => {
+            try {
+                // Đẩy logic sang core.js xử lý
+                const dynamicCore = require("./core.js");
+                await dynamicCore.handleCommand("discord", msg, client);
+            } catch (e) { console.error("Lỗi gọi Core:", e); }
+        });
+
+        client.login(config.discordToken).catch(e => logger.error(`❌ [DISCORD] Lỗi Login: ${e.message}`));
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
     }
 
     // --- MODE 2: MESSENGER (FCA) ---
     else if (config.mode === "messenger") {
+<<<<<<< HEAD
         logger.info("🔵 Đang khởi động MESSENGER Bot...");
         const login = require("@dongdev/fca-unofficial"); // Hoặc fca-horizon-remake
         
         if (!fs.existsSync(config.appStatePath)) {
             logger.error("❌ Không tìm thấy file appstate (cookie)!");
             return;
+=======
+        const login = require("@dongdev/fca-unofficial");
+        
+        if (!fs.existsSync(config.appStatePath)) {
+            return logger.error("❌ Không tìm thấy file appstate (cookie)! Toang!");
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
         }
 
         try {
             const appState = JSON.parse(fs.readFileSync(config.appStatePath, "utf8"));
             
             login({ appState }, (err, api) => {
+<<<<<<< HEAD
                 if (err) {
                     logger.error(`❌ [MESS] Lỗi Login: ${JSON.stringify(err)}`);
                     return;
                 }
+=======
+                if (err) return logger.error(`❌ [MESS] Lỗi Login: ${JSON.stringify(err)}`);
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
 
                 global.client.api = api;
 
                 // Save AppState mới (Auto-Refresh Cookie)
                 fs.writeFileSync(config.appStatePath, JSON.stringify(api.getAppState(), null, 2));
+<<<<<<< HEAD
                 logger.info(`✅ [MESSENGER] Đã online! UID: ${api.getCurrentUserID()}`);
+=======
+                logger.info(`✅ [MESSENGER] Đã online! UID: ${api.getCurrentUserID()} (Bất tử Mode)`);
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
 
                 api.setOptions({
                     listenEvents: true,
@@ -332,7 +409,17 @@ async function startBot() {
                     if (err) return logger.error(`[MQTT] Lỗi: ${err}`);
                     
                     if (["message", "message_reply"].includes(message.type)) {
+<<<<<<< HEAD
                         await handleCommand("messenger", message, api);
+=======
+                        try {
+                            // CHIÊU THỨC TỐI THƯỢNG: Luôn nạp lại core.js mỗi khi có tin nhắn (hoặc dùng require cache nếu m muốn tối ưu RAM)
+                            const dynamicCore = require("./core.js");
+                            await dynamicCore.handleCommand("messenger", message, api);
+                        } catch (e) {
+                            console.error("❌ Lỗi đứt gãy ở Core Logic:", e);
+                        }
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
                     }
                 });
             });
@@ -341,9 +428,17 @@ async function startBot() {
         }
     } 
     else {
+<<<<<<< HEAD
         logger.error("❌ Config sai Mode! Vui lòng chọn 'discord' hoặc 'messenger'.");
+=======
+        logger.error("❌ Config sai Mode m ơi! Vui lòng chọn 'discord' hoặc 'messenger' =))");
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
     }
 }
 
 // Bấm nút start
+<<<<<<< HEAD
 startBot();
+=======
+startBot();
+>>>>>>> 1d48a4d (feat: Deploy GreenLeaf V2.5 - Ultimate Economy & Defense System 🌿🐧)
