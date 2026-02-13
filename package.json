@@ -13,7 +13,8 @@
   "dependencies": {
     "@dongdev/fca-unofficial": "^3.0.25",
     "axios": "^1.13.5",
-    "chalk": "^5.6.2",
+    "chalk": "^4.1.2",
+    "discord.js": "^14.25.1",
     "figlet": "^1.10.0",
     "fs-extra": "^11.3.3",
     "gradient-string": "^3.0.0"
