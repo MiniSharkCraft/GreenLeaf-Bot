@@ -1,0 +1,35 @@
+# --- Dependencies ---
+node_modules/
+package-lock.json
+yarn.lock
+
+# --- Sensitive Data (Tuyệt đối không up) ---
+appstate_letan.json
+cookie.json
+config.json
+.env
+
+# --- Cache & Media (Rác) ---
+cache/
+assets/tmp/
+*.mp4
+*.mp3
+*.jpg
+*.png
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# --- Others ---
+test_dis.js
+temp/

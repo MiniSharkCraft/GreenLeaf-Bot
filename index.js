@@ -1,0 +1,188 @@
+// ====================================================
+// GREENLEAF BOT - MULTI-CORE (MESSENGER & DISCORD)
+// Phiên bản: VPS Immortal 🚀
+// ====================================================
+
+const fs = require("fs-extra");
+const path = require("path");
+const config = require("./config.json");
+const logger = require("./utils/log");
+const UniversalAPI = require("./utils/adapter");
+
+// --- 🛡️ ANTI-CRASH SYSTEM (CHỐNG ĐỘT TỬ) ---
+process.on('unhandledRejection', (reason, p) => {
+    logger.error(`[ANTI-CRASH] Unhandled Rejection: ${reason}`);
+    // Không exit process để PM2 không phải restart liên tục
+});
+
+process.on('uncaughtException', (err, origin) => {
+    logger.error(`[ANTI-CRASH] Uncaught Exception: ${err}`);
+});
+
+// --- 📂 KHỞI TẠO BIẾN TOÀN CỤC ---
+const commands = new Map();
+const events = new Map();
+const cooldowns = new Map();
+
+// --- 🔄 LOAD COMMANDS (LỆNH) ---
+try {
+    const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+    for (const file of commandFiles) {
+        const cmd = require(`./commands/${file}`);
+        if (cmd.config && cmd.config.name) {
+            commands.set(cmd.config.name, cmd);
+            // logger.info(`Đã load lệnh: ${cmd.config.name}`);
+        }
+    }
+} catch (e) { logger.error("Lỗi load commands: " + e.message); }
+
+// --- ⚡ LOAD EVENTS (SỰ KIỆN) ---
+try {
+    const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
+    for (const file of eventFiles) {
+        const ev = require(`./events/${file}`);
+        if (ev.config && ev.config.name) {
+            events.set(ev.config.name, ev);
+            // logger.info(`Đã load event: ${ev.config.name}`);
+        }
+    }
+} catch (e) { logger.error("Lỗi load events: " + e.message); }
+
+// Hiển thị Banner cho ngầu
+logger.banner("GreenLeaf VPS");
+
+// ============================================================
+// 🤖 CORE XỬ LÝ LỆNH (CHUNG CHO CẢ 2 NỀN TẢNG)
+// ============================================================
+async function handleCommand(platform, rawMsg, rawAPI) {
+    // Kích hoạt Adapter (Bộ chuyển đổi)
+    const bot = new UniversalAPI(platform, rawMsg, rawAPI);
+
+    const content = (platform === 'discord') ? rawMsg.content : rawMsg.body;
+    
+    // 1. XỬ LÝ EVENT (Không cần prefix)
+    events.forEach(async (event) => {
+        try {
+            if (event.condition && event.condition(rawMsg, content)) {
+                await event.run({ bot, rawMsg, config, logger });
+            }
+        } catch (e) { logger.error(`Lỗi Event ${event.config.name}: ${e.message}`); }
+    });
+
+    // 2. XỬ LÝ COMMAND (Cần prefix)
+    if (!content.startsWith(config.prefix)) return;
+
+    const args = content.slice(config.prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+
+    if (!commands.has(commandName)) return;
+    const command = commands.get(commandName);
+
+    // Check Admin
+    if (command.config.isAdmin && !config.adminIDs.includes(bot.senderID)) {
+        return bot.send("❌ Lệnh này chỉ dành cho Admin! 🐧");
+    }
+
+    // Check Delay (Cooldown)
+    if (cooldowns.has(bot.senderID)) {
+        const expirationTime = cooldowns.get(bot.senderID) + config.cooldown;
+        if (Date.now() < expirationTime) {
+            return; // Spam thì lờ đi
+        }
+    }
+    cooldowns.set(bot.senderID, Date.now());
+
+    // Thực thi lệnh
+    try {
+        logger.cmd(bot.senderID, commandName);
+        await command.run({ bot, args, config, logger }); 
+    } catch (error) {
+        logger.error(`Lỗi thực thi lệnh ${commandName}: ${error.message}`);
+        bot.send(`❌ Lỗi rồi Boss: ${error.message}`);
+    }
+}
+
+// ============================================================
+// 🔄 HÀM KHỞI ĐỘNG (AUTO RESTART LOGIC)
+// ============================================================
+function startBot() {
+    
+    // 🔵 MODE 1: DISCORD
+    if (config.mode === "discord") {
+        const { Client, GatewayIntentBits } = require('discord.js');
+        const client = new Client({ 
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
+        });
+
+        client.on('ready', () => logger.info(`✅ [DISCORD] Đã online: ${client.user.tag}`));
+        
+        client.on('messageCreate', async (msg) => {
+            if (msg.author.bot) return;
+            await handleCommand("discord", msg, client);
+        });
+
+        client.login(config.discordToken).catch(e => {
+            logger.error(`[DISCORD] Lỗi Login: ${e.message}`);
+            logger.warn("⚠️ Đang thử lại sau 60s...");
+            setTimeout(startBot, 60000);
+        });
+    }
+
+    // 🔵 MODE 2: MESSENGER (FCA)
+    else if (config.mode === "messenger") {
+        const login = require("@dongdev/fca-unofficial");
+        
+        // Check AppState
+        if (!fs.existsSync(config.appStatePath)) {
+            logger.error("❌ Không tìm thấy file appstate! Vui lòng thêm cookie.");
+            // PM2 sẽ tự restart nếu process exit, nhưng ta cứ exit 1 để báo lỗi
+            process.exit(1); 
+        }
+
+        const appState = JSON.parse(fs.readFileSync(config.appStatePath, "utf8"));
+
+        login({ appState }, (err, api) => {
+            if (err) {
+                logger.error(`[MESS] Lỗi Login: ${JSON.stringify(err)}`);
+                logger.warn("⚠️ Đang thử đăng nhập lại sau 60s...");
+                return setTimeout(startBot, 60000); // Đệ quy gọi lại chính nó
+            }
+            
+            // ✅ AUTO RENEW APPSTATE (Quan trọng: Lưu session mới)
+            fs.writeFileSync(config.appStatePath, JSON.stringify(api.getAppState(), null, 2));
+            logger.info(`✅ [MESSENGER] Đã online & Saved AppState! UID: ${api.getCurrentUserID()}`);
+            
+            // Cấu hình FCA
+            api.setOptions({
+                listenEvents: true,
+                selfListen: false,
+                forceLogin: true,
+                autoMarkRead: false,
+                userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            });
+
+            // Lắng nghe MQTT
+            api.listenMqtt(async (err, message) => {
+                if (err) {
+                    logger.error(`❌ Mất kết nối MQTT: ${err}`);
+                    
+                    // Logout sạch sẽ để tránh kẹt session
+                    api.logout();
+                    
+                    logger.warn("🔄 Đang tái khởi động Bot...");
+                    return startBot(); // Gọi lại hàm startBot để login lại
+                }
+                
+                if (!message || !message.body) return;
+                
+                // Chuyển tin nhắn vào Core xử lý
+                await handleCommand("messenger", message, api);
+            });
+        });
+    } else {
+        logger.error("❌ Config sai Mode! Chọn 'discord' hoặc 'messenger'.");
+    }
+}
+
+// 🔥 KÍCH HOẠT BOT
+startBot();

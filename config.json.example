@@ -1,0 +1,36 @@
+{
+  "_INFO": "Cấu hình Bot GreenLeaf (Multi-Core Messenger & Discord)",
+  "_AUTHOR": "Bot 2026",
+
+  "_note_mode": "Chọn chế độ chạy: 'messenger' hoặc 'discord'",
+  "mode": "messenger",
+
+  "_note_bot": "Tên Bot và Dấu lệnh (Prefix)",
+  "botName": "Lễ Tân GreenLeaf 🐧",
+  "prefix": ".",
+
+  "_note_admin": "Danh sách ID Admin (UID Facebook hoặc User ID Discord)",
+  "adminIDs": [
+    "61577016266615",
+    "THEM_ID_KHAC_VAO_DAY"
+  ],
+
+  "_note_discord": "Chỉ điền Token nếu chạy mode Discord",
+  "discordToken": "YOUR_DISCORD_BOT_TOKEN_HERE",
+
+  "_note_messenger": "Đường dẫn file chứa session đăng nhập Facebook",
+  "appStatePath": "./appstate_letan.json",
+
+  "_note_system": "Cooldown: Thời gian chờ giữa 2 lệnh (ms) | Debug: Hiện log chi tiết",
+  "cooldown": 3000,
+  "debugMode": true,
+
+  "_note_server": "Thông tin Server Minecraft để Bot trả lời lệnh .ip .web",
+  "serverInfo": {
+    "name": "",
+    "ip": "",
+    "portPE": "",
+    "web": "",
+    "inviteLink": ""
+  }
+}
