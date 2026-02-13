@@ -1,6 +1,6 @@
 // ====================================================
 // GREENLEAF BOT - MULTI-CORE (MESSENGER & DISCORD)
-// Phiên bản: VPS Immortal 🚀
+// Phiên bản: VPS Immortal 🚀 (Đã Fix Spam)
 // ====================================================
 
 const fs = require("fs-extra");
@@ -12,7 +12,6 @@ const UniversalAPI = require("./utils/adapter");
 // --- 🛡️ ANTI-CRASH SYSTEM (CHỐNG ĐỘT TỬ) ---
 process.on('unhandledRejection', (reason, p) => {
     logger.error(`[ANTI-CRASH] Unhandled Rejection: ${reason}`);
-    // Không exit process để PM2 không phải restart liên tục
 });
 
 process.on('uncaughtException', (err, origin) => {
@@ -22,7 +21,11 @@ process.on('uncaughtException', (err, origin) => {
 // --- 📂 KHỞI TẠO BIẾN TOÀN CỤC ---
 const commands = new Map();
 const events = new Map();
-const cooldowns = new Map();
+const cooldowns = new Map(); // Cái này là cooldown của lệnh (ví dụ: chờ 10s mới đc dùng lệnh cờ bạc)
+
+// 🔥 [NEW] RATE LIMIT MAP (Chống Spam tin nhắn liên tục)
+const rateLimit = new Map(); 
+const RATE_LIMIT_TIME = 2000; // 2000ms = 2 giây (Chỉnh lên 3000 nếu muốn an toàn hơn)
 
 // --- 🔄 LOAD COMMANDS (LỆNH) ---
 try {
@@ -31,7 +34,6 @@ try {
         const cmd = require(`./commands/${file}`);
         if (cmd.config && cmd.config.name) {
             commands.set(cmd.config.name, cmd);
-            // logger.info(`Đã load lệnh: ${cmd.config.name}`);
         }
     }
 } catch (e) { logger.error("Lỗi load commands: " + e.message); }
@@ -43,7 +45,6 @@ try {
         const ev = require(`./events/${file}`);
         if (ev.config && ev.config.name) {
             events.set(ev.config.name, ev);
-            // logger.info(`Đã load event: ${ev.config.name}`);
         }
     }
 } catch (e) { logger.error("Lỗi load events: " + e.message); }
@@ -55,8 +56,26 @@ logger.banner("GreenLeaf VPS");
 // 🤖 CORE XỬ LÝ LỆNH (CHUNG CHO CẢ 2 NỀN TẢNG)
 // ============================================================
 async function handleCommand(platform, rawMsg, rawAPI) {
-    // Kích hoạt Adapter (Bộ chuyển đổi)
+    // Kích hoạt Adapter (Bộ chuyển đổi) để lấy senderID chuẩn
     const bot = new UniversalAPI(platform, rawMsg, rawAPI);
+    const senderID = bot.senderID;
+
+    // --- 🛡️ [NEW] LOGIC ANTI-SPAM (RATE LIMIT) ---
+    // Bỏ qua check nếu là Bot tự nhắn (tránh vòng lặp vô tận)
+    if (senderID === rawAPI.getCurrentUserID?.()) return; 
+
+    if (rateLimit.has(senderID)) {
+        const lastTime = rateLimit.get(senderID);
+        const diff = Date.now() - lastTime;
+        
+        // Nếu nhắn nhanh hơn quy định -> RETURN LUÔN (Không xử lý gì cả)
+        if (diff < RATE_LIMIT_TIME) {
+            return; 
+        }
+    }
+    // Cập nhật thời gian nhắn mới nhất
+    rateLimit.set(senderID, Date.now());
+    // ----------------------------------------------
 
     const content = (platform === 'discord') ? rawMsg.content : rawMsg.body;
     
@@ -83,11 +102,11 @@ async function handleCommand(platform, rawMsg, rawAPI) {
         return bot.send("❌ Lệnh này chỉ dành cho Admin! 🐧");
     }
 
-    // Check Delay (Cooldown)
+    // Check Command Cooldown (Đây là cooldown riêng của từng lệnh)
     if (cooldowns.has(bot.senderID)) {
         const expirationTime = cooldowns.get(bot.senderID) + config.cooldown;
         if (Date.now() < expirationTime) {
-            return; // Spam thì lờ đi
+            return bot.send("⏳ Từ từ thôi Boss, đang hồi chiêu! 🐧");
         }
     }
     cooldowns.set(bot.senderID, Date.now());
@@ -130,12 +149,11 @@ function startBot() {
 
     // 🔵 MODE 2: MESSENGER (FCA)
     else if (config.mode === "messenger") {
-        const login = require("@dongdev/fca-unofficial");
+        const login = require("@dongdev/fca-unofficial"); // Hoặc fca-horizon-remake tùy Boss dùng
         
         // Check AppState
         if (!fs.existsSync(config.appStatePath)) {
             logger.error("❌ Không tìm thấy file appstate! Vui lòng thêm cookie.");
-            // PM2 sẽ tự restart nếu process exit, nhưng ta cứ exit 1 để báo lỗi
             process.exit(1); 
         }
 
@@ -145,10 +163,10 @@ function startBot() {
             if (err) {
                 logger.error(`[MESS] Lỗi Login: ${JSON.stringify(err)}`);
                 logger.warn("⚠️ Đang thử đăng nhập lại sau 60s...");
-                return setTimeout(startBot, 60000); // Đệ quy gọi lại chính nó
+                return setTimeout(startBot, 60000);
             }
             
-            // ✅ AUTO RENEW APPSTATE (Quan trọng: Lưu session mới)
+            // ✅ AUTO RENEW APPSTATE
             fs.writeFileSync(config.appStatePath, JSON.stringify(api.getAppState(), null, 2));
             logger.info(`✅ [MESSENGER] Đã online & Saved AppState! UID: ${api.getCurrentUserID()}`);
             
@@ -165,12 +183,9 @@ function startBot() {
             api.listenMqtt(async (err, message) => {
                 if (err) {
                     logger.error(`❌ Mất kết nối MQTT: ${err}`);
-                    
-                    // Logout sạch sẽ để tránh kẹt session
-                    api.logout();
-                    
+                    api.logout(); // Logout sạch sẽ
                     logger.warn("🔄 Đang tái khởi động Bot...");
-                    return startBot(); // Gọi lại hàm startBot để login lại
+                    return startBot(); 
                 }
                 
                 if (!message || !message.body) return;
