@@ -61,7 +61,8 @@ JSON
   "discordToken": "YOUR_DISCORD_TOKEN",
   "appStatePath": "./appstate_letan.json"
 }
-Lưu ý: Nếu chạy mode Messenger, bạn cần đăng nhập và xuất file appstate_letan.json (J2TEAM Cookies) để vào thư mục gốc.
+
+> Lưu ý: Nếu chạy mode Messenger, bạn cần đăng nhập và xuất file appstate_letan.json (J2TEAM Cookies) để vào thư mục gốc.
 
 🚀 Vận Hành (Run)
 Chạy thử nghiệm (Local)
@@ -80,15 +81,24 @@ pm2 start index.js --name "GreenLeafBot"
 pm2 log
 
 📂 Cấu Trúc Thư Mục
+
 GreenLeafBot/
-├── assets/             # Tài nguyên (Ảnh, Font)
-├── cache/              # Bộ nhớ đệm (Tự động dọn dẹp)
+
+├── assets/   # Tài nguyên (Ảnh, Font)
+├── cache/    # Bộ nhớ đệm (Tự động dọn dẹp)
+
 ├── commands/           # Chứa các lệnh (Command modules)
+
 ├── events/             # Chứa các sự kiện (Event modules)
+
 ├── utils/              # Các hàm hỗ trợ (Log, Adapter, Downloader)
+
 ├── config.json         # File cấu hình chính
+
 ├── index.js            # File khởi động (Core)
+
 └── README.md           # Bạn đang đọc nó đấy 🐧
+
 
 🤝 Đóng Góp
 Mọi ý kiến đóng góp đều được hoan nghênh! Hãy tạo Pull Request hoặc mở Issue nếu bạn phát hiện lỗi.
