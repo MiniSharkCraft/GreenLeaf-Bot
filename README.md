@@ -8,7 +8,7 @@
   
   [![Node.js](https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
   [![Platform](https://img.shields.io/badge/Platform-Messenger%20|%20Discord-blue?style=for-the-badge&logo=facebook)](https://facebook.com)
-  [![Status](https://img.shields.io/badge/Status-24%2F7%20VPS-red?style=for-the-badge&logo=server)](https://greenleaf.congmc.com)
+  [![Status](https://img.shields.io/badge/Status-24%2F7%20VPS-red?style=for-the-badge&logo=server)](https://congmc.com)
   [![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)](LICENSE)
 
   ---
