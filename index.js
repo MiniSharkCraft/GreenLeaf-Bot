@@ -1,4 +1,4 @@
-const login = require("fca-unofficial"); // Hoặc tên thư viện fca m đang xài
+const login = require("@dongdev/fca-unofficial"); // Đúng hàng pháp sư DongDev rồi nha m 🐧☝️
 const fs = require("fs-extra");
 const path = require("path");
 const core = require("./core");
@@ -26,7 +26,7 @@ function startBot() {
         return logger.error("❌ Đéo tìm thấy file cookie! Mày bỏ file appstate vào thư mục gốc đi m ơi! 🐧");
     }
 
-    // 4. Bắt đầu đục tường lửa Facebook
+    // 4. Bắt đầu đục tường lửa Facebook bằng FCA DongDev
     login({ appState: fs.readJsonSync(appStatePath) }, (err, api) => {
         if (err) {
             logger.error(`❌ Lỗi đăng nhập cmnr: ${err}`);
@@ -39,7 +39,7 @@ function startBot() {
         api.setOptions({
             forceLogin: true,
             listenEvents: true,
-            logLevel: "silent", // Tắt bớt log rác của FCA
+            logLevel: "silent", // Tắt bớt log rác
             updatePresence: true,
             selfListen: false
         });
