@@ -32,6 +32,8 @@ Với kiến trúc **Modular**, bot sở hữu hệ thống kinh tế (Economy) 
 | **🧠 Smart Utils** | Tự động dọn dẹp và fix lỗi Database JSON, chống corrupt data | ✅ |
 | **🚀 Hot Reload** | Lệnh `?restart` nạp lại Core và Commands với tốc độ 0s | ✅ |
 
+> Lưu ý: Hệ thống Casino/Economy trong bot chỉ mang tính chất giải trí với tiền ảo trong game. Chúng tôi nghiêm cấm và không hỗ trợ bất kỳ hành vi quy đổi tiền thật nào. Hãy chơi game có trách nhiệm!
+
 ## 🛠️ Cài Đặt & Sử Dụng
 
 ### 1. Yêu cầu hệ thống
