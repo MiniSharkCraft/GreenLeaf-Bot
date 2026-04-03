@@ -85,19 +85,66 @@ npm install
 | `rateLimitTime` | Thời gian rate-limit (ms) |
 | `appStatePath` | Đường dẫn tới file cookie/appstate |
 
+### Lấy AppState (Cookie)
+
+Bot cần file `appstate.json` chứa cookie Facebook để đăng nhập. Có thể lấy bằng extension [c3c-fbstate](https://github.com/nicedayzhu/c3c-fbstate) hoặc tương tự:
+
+1. Đăng nhập Facebook trên trình duyệt bằng acc clone/phụ
+2. Dùng extension export ra file `appstate.json`
+3. Đặt file vào thư mục bot và đảm bảo `appStatePath` trong `config.json` trỏ đúng đường dẫn
+
+> [!WARNING]
+> **Tuyệt đối không** dùng tài khoản Facebook chính. Dùng acc clone sạch để tránh bị khóa.
+
 ### Vận hành
 
-**Development (Local):**
+#### 🖥️ Development (Local)
+
+Chạy trực tiếp để test và debug:
 
 ```bash
 node index.js
 ```
 
-**Production (VPS 24/7):**
+Bot sẽ log ra console, nhấn `Ctrl + C` để dừng.
+
+#### ☁️ Production (VPS 24/7)
+
+Dùng [PM2](https://pm2.keymetrics.io/) để bot chạy nền, tự restart khi crash:
 
 ```bash
+# Cài PM2 toàn cục (chỉ cần 1 lần)
 npm install pm2 -g
+
+# Khởi chạy bot
 pm2 start index.js --name "GreenLeafBot"
+```
+
+Một số lệnh PM2 hữu ích:
+
+```bash
+pm2 logs GreenLeafBot     # Xem log real-time
+pm2 restart GreenLeafBot   # Restart bot
+pm2 stop GreenLeafBot      # Dừng bot
+pm2 delete GreenLeafBot    # Xóa bot khỏi PM2
+pm2 monit                  # Dashboard monitor CPU/RAM
+```
+
+Để bot **tự khởi động lại** khi VPS reboot:
+
+```bash
+pm2 startup
+pm2 save
+```
+
+#### 🐳 Docker (Tùy chọn)
+
+```bash
+# Build image
+docker build -t greenleaf-bot .
+
+# Chạy container
+docker run -d --name greenleaf --restart unless-stopped greenleaf-bot
 ```
 
 ## 📂 Cấu Trúc Thư Mục
