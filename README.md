@@ -68,7 +68,7 @@ npm install
 ```json
 {
   "prefix": "?",
-  "adminIDs": ["YOUR_FACEBOOK_ID"],
+  "adminIDs": ["100012345678901"],
   "adminOnly": false,
   "rateLimitCount": 3,
   "rateLimitTime": 2500,
@@ -79,11 +79,36 @@ npm install
 | Trường | Mô tả |
 | :--- | :--- |
 | `prefix` | Ký tự đặt trước mỗi lệnh (mặc định `?`) |
-| `adminIDs` | Mảng chứa Facebook UID của admin bot |
-| `adminOnly` | `true` = chỉ admin dùng được bot |
-| `rateLimitCount` | Số lệnh tối đa trong khoảng `rateLimitTime` |
-| `rateLimitTime` | Thời gian rate-limit (ms) |
-| `appStatePath` | Đường dẫn tới file cookie/appstate |
+| `adminIDs` | Mảng chứa Facebook UID của (các) admin bot — xem hướng dẫn bên dưới |
+| `adminOnly` | `true` = chỉ admin dùng được bot, `false` = ai cũng dùng được |
+| `rateLimitCount` | Số lệnh tối đa trong khoảng `rateLimitTime` (chống spam) |
+| `rateLimitTime` | Thời gian rate-limit tính bằng mili-giây (2500 = 2.5 giây) |
+| `appStatePath` | Đường dẫn tới file cookie/appstate của acc bot |
+
+#### 🔑 Cách lấy Facebook UID
+
+Facebook UID là dãy số định danh tài khoản (ví dụ: `100012345678901`). Có nhiều cách lấy:
+
+- **Cách 1:** Vào [[Look Up ID](https://lookup-id.com/)] → dán link profile Facebook → copy UID
+- **Cách 2:** Mở profile Facebook → nhấn chuột phải → **View Page Source** → tìm `"userID":"` → dãy số phía sau chính là UID
+- **Cách 3:** Dùng extension trình duyệt như **JEFI FB ID Finder**
+
+#### 👥 Thêm nhiều Admin
+
+Muốn thêm nhiều admin, chỉ cần thêm UID vào mảng `adminIDs`, **mỗi UID cách nhau bằng dấu phẩy**:
+
+```json
+{
+  "adminIDs": [
+    "100012345678901",
+    "100098765432101",
+    "100011223344556"
+  ]
+}
+```
+
+> [!TIP]
+> Mỗi UID phải nằm trong **dấu ngoặc kép** `"..."` và cách nhau bằng **dấu phẩy** `,`. UID cuối cùng **không có** dấu phẩy phía sau.
 
 ### Lấy AppState (Cookie)
 
@@ -94,7 +119,7 @@ Bot cần file `appstate.json` chứa cookie Facebook để đăng nhập. Có t
 3. Đặt file vào thư mục bot và đảm bảo `appStatePath` trong `config.json` trỏ đúng đường dẫn
 
 > [!WARNING]
-> **Tuyệt đối không** dùng tài khoản Facebook chính. Dùng acc clone sạch để tránh bị khóa.
+> **Tuyệt đối không** dùng tài khoản Facebook chính. Dùng acc clone/2022 sạch để tránh bị khóa.
 
 ### Vận hành
 
